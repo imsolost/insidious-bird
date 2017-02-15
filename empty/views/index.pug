@@ -4,8 +4,7 @@ block content
   h1= title
   p Welcome to #{title}
 
-
-  meta(charset='utf-8')
-  title  Insidious Bird
-  script(type='text/javascript', src='phaser.min.js')
-  script(type='text/javascript', src='main.js')
+  form(method='post' action='/users/login')
+    input(type='text' name='user_name')
+    input(type='password' name='password')
+    input(type='submit')
