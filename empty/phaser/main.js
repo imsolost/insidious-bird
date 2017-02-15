@@ -8,7 +8,7 @@ var mainState = {
     // That's where we load the images and sounds
 
     // Load the bird sprite
-    game.load.image('bird', 'assets/bird.png')
+    game.load.image('bird', 'assets/NyanCat.png')
 
     //load pipes sprite
     game.load.image('pipe', 'assets/pipe.png')
@@ -31,13 +31,14 @@ var mainState = {
 
     // Display the bird at the position x=100 and y=245
     this.bird = game.add.sprite(100, 245, 'bird');
+    this.bird.scale.setTo(.2, .2)
 
     // Add physics to the bird
     // Needed for: movements, gravity, collisions, etc.
     game.physics.arcade.enable(this.bird);
 
     // Add gravity to the bird to make it fall
-    this.bird.body.gravity.y = 000;
+    this.bird.body.gravity.y = 1000;
 
     // Call the 'jump' function when the spacekey is hit
     var spaceKey = game.input.keyboard.addKey(
@@ -88,10 +89,10 @@ var mainState = {
     if (this.bird.angle < 20)
       this.bird.angle += 1
 
-      if (fireButton.isDown)
-    {
+    if (fireButton.isDown)
         this.weapon.fire();
-    }
+
+    game.world.wrap(this.bird, 16);
 
   },
 
