@@ -23,10 +23,15 @@ router.post('/login', function(req, res, next) {
   db.retrieveUser({ user_name: user_name })
     .then( user => {
       console.log('USER: ', user[0], 'PASS: ', password);
-      if (user[0].password === password) { res.redirect('/game')
+      if ( user[0] ) {
+        if ( user[0].password === password ) { res.redirect('/game')
+        }
+        else {
+          res.send('wrong password you, but')
+        }
       }
       else {
-        res.send('wrong password you, but')
+        res.send('nihilism')
       }
     })
   //res.send('respond with a resource');
