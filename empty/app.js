@@ -1,21 +1,21 @@
-var express = require('express');
-var path = require('path');
+const express = require('express');
+const path = require('path');
 
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var session = require('express-session');
-var socketIo = require('socket.io');
-var http = require('http');
 
-var index = require('./routes/index');
-var users = require('./routes/users');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const session = require('express-session')
+const socketIo = require('socket.io');
+const http = require('http');
 
-var app = express();
-var httpServer = http.Server(app);
-var io = socketIo(httpServer);
+const index = require('./routes/index');
+const users = require('./routes/users');
 
+const app = express();
+const httpServer = http.Server(app);
+const io = socketIo(httpServer);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -37,7 +37,7 @@ app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
+  let err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
