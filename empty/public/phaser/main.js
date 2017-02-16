@@ -7,12 +7,11 @@ var mainState = {
     // Load the sprites
     game.load.image('nyan', 'phaser/assets/NyanCat.png')
     game.load.image('bird', 'phaser/assets/bird.png')
-    game.load.image('bullet', 'phaser/assets/cupcake.png')
+    game.load.image('bullet', 'phaser/assets/bullet.png')
     game.load.image('pipe', 'phaser/assets/pipe.png')
+    game.load.image('titan', 'phaser/assets/titanMuffin.png')
 
-    //load jump sound
     game.load.audio('jump', 'phaser/assets/jump.wav')
-
   },
 
   create: function() {
@@ -62,13 +61,11 @@ var mainState = {
 
     this.jumpSound = game.add.audio('jump')
 
-    weapon = game.add.weapon(10, 'bullet')
-    weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS
-    weapon.bulletSpeed = 600
-    weapon.fireRate = 100
-    weapon.trackSprite(sprite, 0, 0, true)
-
-    // weapon.bullets.scale.setTo(.5)
+    weaponOne = game.add.weapon(1, 'titan')
+    weaponOne.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS
+    weaponOne.bulletSpeed = 600
+    weaponOne.fireRate = 100
+    weaponOne.trackSprite(sprite, 0, 0, true)
 
     var fireButton = game.input.keyboard.addKey(
                     Phaser.KeyCode.W)
@@ -88,7 +85,7 @@ var mainState = {
       sprite, this.pipes, this.hitPipe, null, this)
 
     game.physics.arcade.overlap(
-      weapon.bullets, this.pipes, this.bulletHitPipe, null, this)
+      weaponOne.bullets, this.pipes, this.bulletHitPipe, null, this)
 
     if (sprite.angle < 20)
       sprite.angle += 1
@@ -118,7 +115,7 @@ var mainState = {
   bulletHitPipe: function(bullet, pipes) {
 
     pipes.kill()
-    bullet.kill()
+    // bullet.kill()
 
   },
 
@@ -159,7 +156,7 @@ var mainState = {
     if (sprite.alive == false)
       return
 
-    weapon.fire()
+    weaponOne.fire()
   },
 
   addOnePipe: function(x, y) {
