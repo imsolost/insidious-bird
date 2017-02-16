@@ -1,4 +1,5 @@
-
+DROP TABLE IF EXISTS "death_coordinates";
+DROP TABLE IF EXISTS "high_scores";
 DROP TABLE IF EXISTS "users";
 
 CREATE TABLE "users" (
@@ -10,26 +11,18 @@ CREATE TABLE "users" (
 );
 
 
-DROP TABLE IF EXISTS "high_scores";
-
 CREATE TABLE "high_scores" (
   id SERIAL PRIMARY KEY,
   score INTEGER NULL DEFAULT NULL,
-  user_id INTEGER NULL DEFAULT NULL
+  user_id INTEGER NULL DEFAULT NULL REFERENCES "users" ("id")
 );
-
-DROP TABLE IF EXISTS "death_coordinates";
 
 CREATE TABLE "death_coordinates" (
   id SERIAL PRIMARY KEY,
   x_pos INTEGER NULL DEFAULT NULL,
   y_pos INTEGER NULL DEFAULT NULL,
-  user_id INTEGER NULL DEFAULT NULL
+  user_id INTEGER NULL DEFAULT NULL REFERENCES "users" ("id")
 );
-
-
-ALTER TABLE "high_scores" ADD FOREIGN KEY (user_id) REFERENCES "users" ("id");
-ALTER TABLE "death_coordinates" ADD FOREIGN KEY (user_id) REFERENCES "users" ("id");
 
 -- ---
 -- Table Properties

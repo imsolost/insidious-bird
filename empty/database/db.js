@@ -1,23 +1,15 @@
-var knex = require('./knex.js')
+const knex = require('./knex.js')
 
-var insertRecord = (table, data) => {
-  return knex(table).insert(data).returning('*')
-    .then(record => record)
-}
+const insertRecord = (table, data) =>
+  knex( table ).insert( data ).returning('*')
 
-var insertUser = (data) => {
-  return insertRecord('users', data)
-    .then(user => user)
-}
+const insertUser = (data) =>
+  insertRecord('users', data)
 
-var retrieveRecord = (table, data) => {
-  return knex(table).where(data).select()
-    .then(record => record)
-}
+const retrieveRecord = (table, data) =>
+  knex( table ).where( data ).select()
 
-var retrieveUser = (data) => {
-  return retrieveRecord('users', data)
-    .then(user => user)
-}
+const retrieveUser = (data) =>
+  retrieveRecord('users', data)
 
 module.exports = { insertUser, retrieveUser }

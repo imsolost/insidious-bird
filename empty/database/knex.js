@@ -1,8 +1,8 @@
 
- var knex = require('knex') ({
+ const knex = require('knex') ({
   client: "pg",
   connection: {
-    host: 'localhost',
+    host: process.env.PG_CONNECTION_STRING,
     user: process.env.USER,
     database: 'flappybase'
   },

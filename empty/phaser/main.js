@@ -1,6 +1,6 @@
 //create main state that contains game
 
-var mainState = {
+const mainState = {
   preload: function() {
     // Load the sprites
     game.load.image('nyan', 'assets/NyanCat.png')
@@ -32,15 +32,15 @@ var mainState = {
     sprite.body.gravity.y = 1000;
 
     // Call the 'jump' function when the spacekey is hit
-    var spaceKey = game.input.keyboard.addKey(
+    const spaceKey = game.input.keyboard.addKey(
                    Phaser.Keyboard.SPACEBAR);
     spaceKey.onDown.add(this.jump, this);
 
-    var upArrow = game.input.keyboard.addKey(
+    const upArrow = game.input.keyboard.addKey(
                    Phaser.Keyboard.UP);
     upArrow.onDown.add(this.teleportUp, this);
 
-    var downArrow = game.input.keyboard.addKey(
+    const downArrow = game.input.keyboard.addKey(
                    Phaser.Keyboard.DOWN);
     downArrow.onDown.add(this.teleportDown, this);
 
@@ -63,7 +63,7 @@ var mainState = {
     weapon.fireRate = 100
     weapon.trackSprite(sprite, 0, 0, true)
 
-    var fireButton = game.input.keyboard.addKey(
+    const fireButton = game.input.keyboard.addKey(
                     Phaser.KeyCode.W)
     fireButton.onDown.add(this.fireWeapon, this)
 
@@ -159,7 +159,7 @@ var mainState = {
 
   addOnePipe: function(x, y) {
       // Create a pipe at the position x and y
-      var pipe = game.add.sprite(x, y, 'pipe');
+      const pipe = game.add.sprite(x, y, 'pipe');
 
       // Add the pipe to our previously created group
       this.pipes.add(pipe);
@@ -178,11 +178,11 @@ var mainState = {
   addRowOfPipes: function() {
     // Randomly pick a number between 1 and 5
     // This will be the hole position
-    var hole = Math.floor(Math.random() * 5) + 1;
+    let hole = Math.floor(Math.random() * 5) + 1;
 
     // Add the 6 pipes
     // With one big hole at position 'hole' and 'hole + 1'
-    for (var i = 0; i < 8; i++)
+    for (let i = 0; i < 8; i++)
         if (i != hole && i != hole + 1 && i != hole + 2)
             this.addOnePipe(400, i * 60 + 10);
 
@@ -198,7 +198,7 @@ var mainState = {
 }
 
 // Initialize Phaser, and create a 400px by 490px game
-var game = new Phaser.Game(400, 490)
+let game = new Phaser.Game(400, 490)
 
 // Add the 'mainState' and call it 'main'
 game.state.add('main', mainState)
