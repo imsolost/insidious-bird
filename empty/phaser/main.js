@@ -3,9 +3,9 @@
 var mainState = {
   preload: function() {
     // Load the sprites
-    game.load.image('nyan', 'assets/NyanCat.png')
+    game.load.image('nyan', 'assets/p2sheepsheep.png')
     game.load.image('bird', 'assets/bird.png')
-    game.load.image('bullet', 'assets/bird.png')
+    game.load.image('bullet', 'assets/bullet.png')
     game.load.image('pipe', 'assets/pipe.png')
 
     //load jump sound
