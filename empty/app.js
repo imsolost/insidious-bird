@@ -29,7 +29,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 // app.use("/socket.io", express.static(path.join(__dirname, './node_modules/socket.io-client/dist')));
-app.use('/game', express.static(path.join(__dirname, 'phaser')))
+// app.use('/game', express.static(path.join(__dirname, 'phaser')))
 
 app.use('/', index);
 app.use('/users', users);
@@ -55,9 +55,13 @@ app.use(function(err, req, res, next) {
 
 io.on('connection', function (socket) {
   socket.emit('news', { hello: 'world' });
-  socket.on('ping', function (data) {
-    console.log("received ping", data);
-    socket.emit('pong', { frog: 45 })
+  // socket.on('ping', function (data) {
+  //   console.log("received ping", data.a);
+  //   socket.emit('pong', { frog: 45 })
+  // });
+  socket.on('jumped', function (data) {
+    console.log("Message received on server", data);
+    io.emit( 'jumped', {message: "other computer jumped"})
   });
 });
 
