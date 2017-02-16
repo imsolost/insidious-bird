@@ -10,7 +10,7 @@ Learn the ins and outs of Networking and sharing simultaneous data between multi
 
 ## Specifications
 
-- [ ] User can play a basic Flappy Bird clone using the Spacebar
+- [x] User can play a basic Flappy Bird clone using the Spacebar
 - [ ] Map is generated randomly with a reusable seed, allowing multiple players to see the same random map.
 - [ ] User can log in, and we will use a postresql database to save high scores, achievements, flap count
 - [ ] Users will be able to connect to each other from different computers to play a head-to-head game.
@@ -27,7 +27,7 @@ Learn the ins and outs of Networking and sharing simultaneous data between multi
 
 _Do not remove these specs - they are required for all goals_.
 
-- [ ] The artifact produced is properly licensed, preferably with the [MIT license][mit-license].
+- [x] The artifact produced is properly licensed, preferably with the [MIT license][mit-license].
 
 ## Quality Rubric
 
