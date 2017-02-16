@@ -5,12 +5,17 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var session = require('express-session')
+var session = require('express-session');
+var socketIo = require('socket.io');
+var http = require('http');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
+var httpServer = http.Server(app);
+var io = socketIo(httpServer);
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -23,6 +28,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+// app.use("/socket.io", express.static(path.join(__dirname, './node_modules/socket.io-client/dist')));
 app.use('/game', express.static(path.join(__dirname, 'phaser')))
 
 app.use('/', index);
@@ -47,4 +53,12 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+io.on('connection', function (socket) {
+  socket.emit('news', { hello: 'world' });
+  socket.on('ping', function (data) {
+    console.log("received ping", data);
+    socket.emit('pong', { frog: 45 })
+  });
+});
+
+module.exports = httpServer;

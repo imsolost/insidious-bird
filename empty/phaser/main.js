@@ -5,7 +5,7 @@ var mainState = {
     // Load the sprites
     game.load.image('nyan', 'assets/NyanCat.png')
     game.load.image('bird', 'assets/bird.png')
-    game.load.image('bullet', 'assets/bullet.png')
+    game.load.image('bullet', 'assets/bird.png')
     game.load.image('pipe', 'assets/pipe.png')
 
     //load jump sound
@@ -63,6 +63,8 @@ var mainState = {
     weapon.fireRate = 100
     weapon.trackSprite(sprite, 0, 0, true)
 
+    // weapon.bullets.scale.setTo(.5)
+
     var fireButton = game.input.keyboard.addKey(
                     Phaser.KeyCode.W)
     fireButton.onDown.add(this.fireWeapon, this)
@@ -108,13 +110,10 @@ var mainState = {
     }, this)
   },
 
-  bulletHitPipe: function() {
-    // If the bird has already hit a pipe, do nothing
-    if (sprite.alive == false)
-      return
+  bulletHitPipe: function(bullet, pipes) {
 
-      this.pipes.kill()
-      weapon.bullets.kill()
+    pipes.kill()
+    bullet.kill()
 
   },
 
