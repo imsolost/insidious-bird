@@ -1,44 +1,35 @@
 //create main state that contains game
 
-var weapon;
-
 var mainState = {
   preload: function() {
-    // This function will be executed at the beginning
-    // That's where we load the images and sounds
-
-    // Load the bird sprite
-    game.load.image('bird', 'assets/NyanCat.png')
-
-    //load pipes sprite
+    // Load the sprites
+    game.load.image('nyan', 'assets/NyanCat.png')
+    game.load.image('bird', 'assets/bird.png')
+    game.load.image('bullet', 'assets/bullet.png')
     game.load.image('pipe', 'assets/pipe.png')
 
     //load jump sound
     game.load.audio('jump', 'assets/jump.wav')
 
-    game.load.image('bullet', 'assets/bullet.png')
   },
 
   create: function() {
-    // This function is called after the preload function
-    // Here we set up the game, display sprites, etc.
-
     // Change the background color of the game to blue
    game.stage.backgroundColor = '#71c5cf';
 
    // Set the physics system
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
-    // Display the bird at the position x=100 and y=245
-    this.bird = game.add.sprite(100, 245, 'bird');
-    this.bird.scale.setTo(.2, .2)
+    // Display the sprite at the position x=100 and y=245
+    sprite = game.add.sprite(100, 245, 'nyan');
+    sprite.scale.setTo(.2, .2)
 
     // Add physics to the bird
     // Needed for: movements, gravity, collisions, etc.
-    game.physics.arcade.enable(this.bird);
+    game.physics.arcade.enable(sprite);
 
     // Add gravity to the bird to make it fall
-    this.bird.body.gravity.y = 1000;
+    sprite.body.gravity.y = 1000;
 
     // Call the 'jump' function when the spacekey is hit
     var spaceKey = game.input.keyboard.addKey(
@@ -62,103 +53,108 @@ var mainState = {
     this.score = 0
     this.labelScore = game.add.text(20, 20, '0', { font: '30px Arial', fill: '#ffffff' })
 
-    this.bird.anchor.setTo(-.2, .5)
+    sprite.anchor.setTo(-.2, .5)
 
     this.jumpSound = game.add.audio('jump')
 
-    var weapon = this.add.weapon(10, 'bullet')
+    weapon = game.add.weapon(10, 'bullet')
     weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS
     weapon.bulletSpeed = 600
     weapon.fireRate = 100
-    weapon.trackSprite(this.bird, 0, 0, true)
-    fireButton = this.input.keyboard.addKey(Phaser.KeyCode.W)
+    weapon.trackSprite(sprite, 0, 0, true)
+
+    var fireButton = game.input.keyboard.addKey(
+                    Phaser.KeyCode.W)
+    fireButton.onDown.add(this.fireWeapon, this)
+
   },
 
   update: function() {
     // This function is called 60 times per second
     // It contains the game's logic
-
     // If the bird is out of the screen (too high or too low)
     // Call the 'restartGame' function
-    if (this.bird.y < 0 || this.bird.y > 490)
+    if (sprite.y < 0 || sprite.y > 490)
       this.restartGame()
 
     game.physics.arcade.overlap(
-      this.bird, this.pipes, this.hitPipe, null, this)
+      sprite, this.pipes, this.hitPipe, null, this)
 
-    if (this.bird.angle < 20)
-      this.bird.angle += 1
+    game.physics.arcade.overlap(
+      weapon.bullets, this.pipes, this.bulletHitPipe, null, this)
 
-    if (fireButton.isDown)
-        this.weapon.fire();
+    if (sprite.angle < 20)
+      sprite.angle += 1
 
-    game.world.wrap(this.bird, 16);
+    game.world.wrap(sprite, 16);
 
   },
 
   hitPipe: function() {
     // If the bird has already hit a pipe, do nothing
     // It means the bird is already falling off the screen
-    if (this.bird.alive == false)
+    if (sprite.alive == false)
       return
 
     //set the alive property of the bird to false
-    this.bird.alive = false
+    sprite.alive = false
 
     //prevent new pipes from appearing
     game.time.events.remove(this.timer)
 
-    //go through all the pupes and stop their movements
+    //go through all the pipes and stop their movements
     this.pipes.forEach(function(p){
       p.body.velocity.x = 0
     }, this)
   },
 
-  //make bird jump
+  bulletHitPipe: function() {
+    // If the bird has already hit a pipe, do nothing
+    if (sprite.alive == false)
+      return
+
+      this.pipes.kill()
+      weapon.bullets.kill()
+
+  },
+
   jump: function() {
-    if (this.bird.alive == false)
+    if (sprite.alive == false)
       return
 
     //add a vertical velocity to the bird
-    this.bird.body.velocity.y = -350
+    sprite.body.velocity.y = -350
 
-    // Create an animation on the bird
-    //var animation = game.add.tween(this.bird)
-
-    // Change the angle of the bird to -20° in 100 milliseconds
-    //animation.to( { angle: -20}, 100 )
-
-    //and start the animation
-    //animation.start()
-
-    game.add.tween(this.bird).to({angle: -20}, 100).start()
+    game.add.tween(sprite).to({angle: -20}, 100).start()
 
     this.jumpSound.play()
   },
 
   teleportUp: function() {
-    if (this.bird.alive == false)
+    if (sprite.alive == false)
       return
 
-    this.bird.y -= 100
+    sprite.y -= 100
+    sprite.body.velocity.y = 0
 
     this.jumpSound.play()
   },
 
   teleportDown: function() {
-    if (this.bird.alive == false)
+    if (sprite.alive == false)
       return
 
-    this.bird.y += 100
+    sprite.y += 100
+    sprite.body.velocity.y = 0
 
     this.jumpSound.play()
   },
 
-  fire: function() {
-    if (this.bird.alive == false)
+  fireWeapon: function() {
+    if (sprite.alive == false)
       return
 
-    this.weapon.fire()
+    weapon.fire()
   },
 
   addOnePipe: function(x, y) {
