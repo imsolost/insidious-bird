@@ -1,19 +1,23 @@
 //create main state that contains game
 
-const mainState = {
+let id
+
+var mainState = {
   preload: function() {
     // Load the sprites
-    game.load.image('nyan', 'assets/NyanCat.png')
-    game.load.image('bird', 'assets/bird.png')
-    game.load.image('bullet', 'assets/bullet.png')
-    game.load.image('pipe', 'assets/pipe.png')
+    game.load.image('nyan', 'phaser/assets/NyanCat.png')
+    game.load.image('bird', 'phaser/assets/bird.png')
+    game.load.image('bullet', 'phaser/assets/bullet.png')
+    game.load.image('pipe', 'phaser/assets/pipe.png')
+    game.load.image('titan', 'phaser/assets/titanMuffin.png')
 
-    //load jump sound
-    game.load.audio('jump', 'assets/jump.wav')
-
+    game.load.audio('jump', 'phaser/assets/jump.wav')
   },
 
   create: function() {
+
+    id = Math.random()
+
     // Change the background color of the game to blue
    game.stage.backgroundColor = '#71c5cf';
 
@@ -32,15 +36,15 @@ const mainState = {
     sprite.body.gravity.y = 1000;
 
     // Call the 'jump' function when the spacekey is hit
-    const spaceKey = game.input.keyboard.addKey(
+    var spaceKey = game.input.keyboard.addKey(
                    Phaser.Keyboard.SPACEBAR);
     spaceKey.onDown.add(this.jump, this);
 
-    const upArrow = game.input.keyboard.addKey(
+    var upArrow = game.input.keyboard.addKey(
                    Phaser.Keyboard.UP);
     upArrow.onDown.add(this.teleportUp, this);
 
-    const downArrow = game.input.keyboard.addKey(
+    var downArrow = game.input.keyboard.addKey(
                    Phaser.Keyboard.DOWN);
     downArrow.onDown.add(this.teleportDown, this);
 
@@ -57,13 +61,13 @@ const mainState = {
 
     this.jumpSound = game.add.audio('jump')
 
-    weapon = game.add.weapon(10, 'bullet')
-    weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS
-    weapon.bulletSpeed = 600
-    weapon.fireRate = 100
-    weapon.trackSprite(sprite, 0, 0, true)
+    weaponOne = game.add.weapon(1, 'titan')
+    weaponOne.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS
+    weaponOne.bulletSpeed = 600
+    weaponOne.fireRate = 100
+    weaponOne.trackSprite(sprite, 0, 0, true)
 
-    const fireButton = game.input.keyboard.addKey(
+    var fireButton = game.input.keyboard.addKey(
                     Phaser.KeyCode.W)
     fireButton.onDown.add(this.fireWeapon, this)
 
@@ -74,14 +78,14 @@ const mainState = {
     // It contains the game's logic
     // If the bird is out of the screen (too high or too low)
     // Call the 'restartGame' function
-    if (sprite.y < 0 || sprite.y > 490)
+    if (sprite.y < 0 || sprite.y > 735)
       this.restartGame()
 
     game.physics.arcade.overlap(
       sprite, this.pipes, this.hitPipe, null, this)
 
     game.physics.arcade.overlap(
-      weapon.bullets, this.pipes, this.bulletHitPipe, null, this)
+      weaponOne.bullets, this.pipes, this.bulletHitPipe, null, this)
 
     if (sprite.angle < 20)
       sprite.angle += 1
@@ -108,13 +112,10 @@ const mainState = {
     }, this)
   },
 
-  bulletHitPipe: function() {
-    // If the bird has already hit a pipe, do nothing
-    if (sprite.alive == false)
-      return
+  bulletHitPipe: function(bullet, pipes) {
 
-      this.pipes.kill()
-      weapon.bullets.kill()
+    pipes.kill()
+    // bullet.kill()
 
   },
 
@@ -128,13 +129,14 @@ const mainState = {
     game.add.tween(sprite).to({angle: -20}, 100).start()
 
     this.jumpSound.play()
+    socket.emit('jumped', {message: id })
   },
 
   teleportUp: function() {
     if (sprite.alive == false)
       return
 
-    sprite.y -= 100
+    sprite.y -= 200
     sprite.body.velocity.y = 0
 
     this.jumpSound.play()
@@ -144,7 +146,7 @@ const mainState = {
     if (sprite.alive == false)
       return
 
-    sprite.y += 100
+    sprite.y += 200
     sprite.body.velocity.y = 0
 
     this.jumpSound.play()
@@ -154,12 +156,12 @@ const mainState = {
     if (sprite.alive == false)
       return
 
-    weapon.fire()
+    weaponOne.fire()
   },
 
   addOnePipe: function(x, y) {
       // Create a pipe at the position x and y
-      const pipe = game.add.sprite(x, y, 'pipe');
+      var pipe = game.add.sprite(x, y, 'pipe');
 
       // Add the pipe to our previously created group
       this.pipes.add(pipe);
@@ -178,13 +180,15 @@ const mainState = {
   addRowOfPipes: function() {
     // Randomly pick a number between 1 and 5
     // This will be the hole position
-    let hole = Math.floor(Math.random() * 5) + 1;
+    var holeOne = Math.floor(Math.random() * 5) + 1;
+
+    var holeTwo = Math.floor(Math.random() * 5) + 5;
 
     // Add the 6 pipes
     // With one big hole at position 'hole' and 'hole + 1'
-    for (let i = 0; i < 8; i++)
-        if (i != hole && i != hole + 1 && i != hole + 2)
-            this.addOnePipe(400, i * 60 + 10);
+    for (var i = 0; i < 12; i++)
+        if ((i != holeOne && i != holeOne + 1) && (i != holeTwo && i != holeTwo + 1))
+            this.addOnePipe(600, i * 60 + 10);
 
   this.score += 1
   this.labelScore.text = this.score
@@ -198,10 +202,25 @@ const mainState = {
 }
 
 // Initialize Phaser, and create a 400px by 490px game
-let game = new Phaser.Game(400, 490)
+var game = new Phaser.Game(600, 735)
 
 // Add the 'mainState' and call it 'main'
 game.state.add('main', mainState)
 
 // Start the state to actually start the game
 game.state.start('main')
+
+
+var socket = io.connect();
+socket.on('news', function (data) {
+  console.log(data);
+  socket.emit('my other event', { my: 'data' });
+});
+socket.on('pong', function (data) {
+  console.log("client side received pong", data);
+});
+socket.on('jumped', function (data) {
+  console.log('id', socket.id);
+  // console.log('io', io);
+  // console.log("received jumped in browser", data.message);
+});

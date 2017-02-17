@@ -18,12 +18,21 @@ router.post('/login', function ( req, res, next ) {
 
   db.retrieveUser( { user_name: user_name } )
     .then( user => {
-      if (user[0].password === password) {
-        res.redirect( '/game' )
+      if ( user[0] ) {
+        if ( user[0].password === password ) {
+          res.redirect('/game')
+        }
+        else {
+          res.status(401)
+          res.redirect('/')
+        }
       }
       else {
-        res.send( 'wrong password you, but' )
+        res.send('nihilism')
       }
+    })
+    .catch( error => {
+      throw error
     })
 });
 
