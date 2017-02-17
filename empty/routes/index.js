@@ -8,6 +8,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/game', function(req, res, next) {
+  console.log('REQUEST', req.user);
   res.render('game', { title: 'Rainbow Super Attack Happy Fun Time' });
 });
 

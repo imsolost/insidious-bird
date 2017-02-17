@@ -1,6 +1,7 @@
+const passport = require('passport');
+
 const express = require('express');
 const path = require('path');
-
 
 const favicon = require('serve-favicon');
 const logger = require('morgan');
@@ -28,8 +29,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-// app.use("/socket.io", express.static(path.join(__dirname, './node_modules/socket.io-client/dist')));
-// app.use('/game', express.static(path.join(__dirname, 'phaser')))
+
+app.use(session( {secret: 'weCodeGood'}))
+app.use(passport.initialize());
+app.use(passport.session());
+
+// app.use(express.static(path.join(__dirname, '..', '..', 'client')));
 
 app.use('/', index);
 app.use('/users', users);

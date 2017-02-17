@@ -2,15 +2,27 @@ const express = require( 'express' );
 const router = express.Router();
 const db = require( '../database/db.js' )
 
+const authHelpers = require('../auth/_helpers');
+const passport = require('../auth/local');
+
 router.get( '/', function ( req, res, next ) {
   res.render( 'signup' );
 });
 
 router.post('/signup', function ( req, res, next ) {
-  let { user_name, password } = req.body
+  return authHelpers.createUser(req, res)
+    .then( (response) => {
+              console.log('got to line 15ish', response);
+      passport.authenticate('local', (err, user, info) => {
+        console.log('got to line 17ish', user);
+        if (user) { res.redirect( '/game' ) }
+      })(req, res, next)
+    })
+    .catch((err) => { console.log('there is an error adding a user', err); })
+  // let { user_name, password } = req.body
 
-  db.insertUser({ user_name: user_name, password: password })
-    .then( user => res.redirect( '/game' ) )
+  // db.insertUser({ user_name: user_name, password: password })
+  //   .then( user => res.redirect( '/game' ) )
 });
 
 router.post('/login', function ( req, res, next ) {
