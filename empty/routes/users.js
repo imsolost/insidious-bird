@@ -23,12 +23,16 @@ router.post('/login', function ( req, res, next ) {
           res.redirect('/game')
         }
         else {
-          res.send('wrong password you, but')
+          res.status(401)
+          res.redirect('/')
         }
       }
       else {
         res.send('nihilism')
       }
+    })
+    .catch( error => {
+      throw error
     })
 });
 
