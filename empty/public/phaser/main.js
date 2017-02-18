@@ -1,8 +1,9 @@
-//create main state that contains game
 
-let id
+let userId = Math.floor(Math.random() * 100000 )
+const players = {}
 
 var mainState = {
+
   preload: function() {
     // Load the sprites
     game.load.image('nyan', 'phaser/assets/NyanCat.png')
@@ -10,35 +11,50 @@ var mainState = {
     game.load.image('bullet', 'phaser/assets/bullet.png')
     game.load.image('pipe', 'phaser/assets/pipe.png')
     game.load.image('titan', 'phaser/assets/titanMuffin.png')
+    game.load.image('p2sheepsheep', 'phaser/assets/p2sheepsheep.png')
 
     game.load.audio('jump', 'phaser/assets/jump.wav')
+    game.load.audio('jazz', 'phaser/assets/NyanCatSmoothJazz.mp3')
+  },
+
+  initializeCharacter: function(actor) {
+    actor.alive = true
+    actor.scale.setTo(.2, .2)
+    game.physics.arcade.enable(actor);
+    actor.body.gravity.y = 1000;
+    actor.anchor.setTo(-.2, .5)
+    actor.fallen = false
+    // console.log('players', players);
+  },
+
+  initializeSprite: function(externalId) {
+    players[externalId] = game.add.sprite(100, 345, 'p2sheepsheep');
+    this.initializeCharacter(players[externalId])
   },
 
   create: function() {
 
-    id = Math.random()
-
-    // Change the background color of the game to blue
    game.stage.backgroundColor = '#71c5cf';
 
-   // Set the physics system
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
-    // Display the sprite at the position x=100 and y=245
-    sprite = game.add.sprite(100, 245, 'nyan');
-    sprite.scale.setTo(.2, .2)
+    players[userId] = game.add.sprite(100, 345, 'nyan');
+    nyanCatSprite = players[userId]
+    this.initializeCharacter(nyanCatSprite)
+
+
+    // playerTwo = game.add.sprite(100, 445, 'p2sheepsheep');
+    // playerTwo.scale.setTo(.2, .2)
 
     // Add physics to the bird
     // Needed for: movements, gravity, collisions, etc.
-    game.physics.arcade.enable(sprite);
 
     // Add gravity to the bird to make it fall
-    sprite.body.gravity.y = 1000;
 
     // Call the 'jump' function when the spacekey is hit
     var spaceKey = game.input.keyboard.addKey(
                    Phaser.Keyboard.SPACEBAR);
-    spaceKey.onDown.add(this.jump, this);
+    spaceKey.onDown.add(this.emitJump, this);
 
     var upArrow = game.input.keyboard.addKey(
                    Phaser.Keyboard.UP);
@@ -57,15 +73,19 @@ var mainState = {
     this.score = 0
     this.labelScore = game.add.text(20, 20, '0', { font: '30px Arial', fill: '#ffffff' })
 
-    sprite.anchor.setTo(-.2, .5)
 
     this.jumpSound = game.add.audio('jump')
+    this.jumpSound.volume = .05
+    this.backgroundMusic = game.add.audio('jazz')
+
+    this.sound.stopAll()
+    this.backgroundMusic.play()
 
     weaponOne = game.add.weapon(1, 'titan')
     weaponOne.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS
     weaponOne.bulletSpeed = 600
     weaponOne.fireRate = 100
-    weaponOne.trackSprite(sprite, 0, 0, true)
+    weaponOne.trackSprite(nyanCatSprite, 0, 0, true)
 
     var fireButton = game.input.keyboard.addKey(
                     Phaser.KeyCode.W)
@@ -78,38 +98,35 @@ var mainState = {
     // It contains the game's logic
     // If the bird is out of the screen (too high or too low)
     // Call the 'restartGame' function
-    if (sprite.y < 0 || sprite.y > 735)
-      this.restartGame()
+    for ( let key in players ) {
+      if (players[key].angle < 20)
+        players[key].angle += 1
 
-    game.physics.arcade.overlap(
-      sprite, this.pipes, this.hitPipe, null, this)
+        game.physics.arcade.overlap(
+          players[key], this.pipes, this.emitHitPipe, null, this)
+
+          // if (players[key].y < 0 || players[key].y > 735)
+          //   if (players[key].fallen === false) {
+          //       players[key.fallen] = true
+          //       restartGame()
+          //   }
+    }
+    if (nyanCatSprite.y < 0 || nyanCatSprite.y > 735)
+      nyanCatSprite.kill()
+
+    // game.physics.arcade.overlap(
+    //   nyanCatSprite, this.pipes, this.hitPipe, null, this)
 
     game.physics.arcade.overlap(
       weaponOne.bullets, this.pipes, this.bulletHitPipe, null, this)
 
-    if (sprite.angle < 20)
-      sprite.angle += 1
-
-    game.world.wrap(sprite, 16);
-
   },
 
-  hitPipe: function() {
-    // If the bird has already hit a pipe, do nothing
-    // It means the bird is already falling off the screen
-    if (sprite.alive == false)
-      return
-
-    //set the alive property of the bird to false
-    sprite.alive = false
-
-    //prevent new pipes from appearing
-    game.time.events.remove(this.timer)
-
-    //go through all the pipes and stop their movements
-    this.pipes.forEach(function(p){
-      p.body.velocity.x = 0
-    }, this)
+  sendId: function() {
+    socket.emit('sendId', {userId: userId})
+    socket.on('sendId', function (data) {
+      mainState.initializeSprite(data.userId)
+    })
   },
 
   bulletHitPipe: function(bullet, pipes) {
@@ -119,41 +136,79 @@ var mainState = {
 
   },
 
-  jump: function() {
-    if (sprite.alive == false)
-      return
+  emitSignal: function(functionName) {
+    // const functions = {jump: (actor) => {mainState.jump(actor)} }
+    const functions = { jump: this.jump, hitPipe: this.hitPipe}
+    // functions.jump = this.jump
 
-    //add a vertical velocity to the bird
-    sprite.body.velocity.y = -350
 
-    game.add.tween(sprite).to({angle: -20}, 100).start()
-
-    this.jumpSound.play()
-    socket.emit('jumped', {message: id })
+    socket.emit('signal', {userId: userId, function: functionName})
+    socket.on('signal', function (data) {
+      functions[data.function](players[data.userId])
+    })
   },
 
-  teleportUp: function() {
-    if (sprite.alive == false)
+  emitHitPipe: function() {
+    this.emitSignal('hitPipe')
+  },
+
+  hitPipe: function(actor) {
+    if (actor.alive == false)
       return
 
-    sprite.y -= 200
-    sprite.body.velocity.y = 0
+    //set the alive property of the bird to false
+    actor.alive = false
+
+    actor.body.velocity.x = -200
+    //prevent new pipes from appearing
+    game.time.events.remove(this.timer)
+
+    //go through all the pipes and stop their movements
+    this.pipes.forEach(function(p){
+      p.body.velocity.x = 0
+    }, this)
+  },
+
+  emitJump: function() {
+    this.emitSignal('jump')
+    //socket.emit('signal', { userId: userId, functionName: 'jump' })
+     //socket.on('jumped', function (data) {
+    //      mainState.jump(players[data.userId])
+    // })
+  },
+
+  jump: function (actor) {
+    if (actor.alive == false)
+      return
+
+    actor.body.velocity.y = -350
+    game.add.tween(actor).to({angle: -20}, 100).start()
+    this.jumpSound.play()
+  },
+
+
+  teleportUp: function() {
+    if (nyanCatSprite.alive == false)
+      return
+
+    nyanCatSprite.y -= 100
+    nyanCatSprite.body.velocity.y = 0
 
     this.jumpSound.play()
   },
 
   teleportDown: function() {
-    if (sprite.alive == false)
+    if (nyanCatSprite.alive == false)
       return
 
-    sprite.y += 200
-    sprite.body.velocity.y = 0
+    nyanCatSprite.y += 100
+    nyanCatSprite.body.velocity.y = 0
 
     this.jumpSound.play()
   },
 
   fireWeapon: function() {
-    if (sprite.alive == false)
+    if (nyanCatSprite.alive == false)
       return
 
     weaponOne.fire()
@@ -197,7 +252,17 @@ var mainState = {
   //restart the game
   restartGame: function() {
     //start the 'main' state, which restarts the game
-    game.state.start('main')
+    let graveyard = []
+
+    for (var key in players) {
+      if (players.fallen === true) {
+        graveyard.push(players.userId)
+      }
+    }
+
+    if (graveyard.length >= Object.keys(players).length) {
+      game.state.start('main')
+    }
   }
 }
 
@@ -210,17 +275,17 @@ game.state.add('main', mainState)
 // Start the state to actually start the game
 game.state.start('main')
 
+const gameState = game.state.states.main;
 
 var socket = io.connect();
 socket.on('news', function (data) {
-  console.log(data);
-  socket.emit('my other event', { my: 'data' });
+  gameState.sendId()
 });
-socket.on('pong', function (data) {
-  console.log("client side received pong", data);
-});
+
 socket.on('jumped', function (data) {
-  console.log('id', socket.id);
   // console.log('io', io);
   // console.log("received jumped in browser", data.message);
-});
+})
+// socket.on('pong', function (data) {
+//   console.log("client side received pong", data);
+// });

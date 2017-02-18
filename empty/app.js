@@ -34,10 +34,20 @@ app.use(session( {secret: 'weCodeGood'}))
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use('/users', users);
+
+// const ensureLoggedIn = (req, res) => {
+//   console.log('req.session.user::', req.session.user)
+//   if(!( req.session.user)) {
+//     res.redirect('/users/login')
+//   }
+// }
+//
+// app.use(ensureLoggedIn)
+
 // app.use(express.static(path.join(__dirname, '..', '..', 'client')));
 
 app.use('/', index);
-app.use('/users', users);
 
 
 // catch 404 and forward to error handler
@@ -65,8 +75,18 @@ io.on('connection', function (socket) {
   //   socket.emit('pong', { frog: 45 })
   // });
   socket.on('jumped', function (data) {
-    console.log("Message received on server", data);
-    io.emit( 'jumped', {message: "other computer jumped"})
+    io.emit( 'jumped', data)
+  });
+
+  socket.on('piped', function (data) {
+    io.emit( 'piped', data)
+  });
+  socket.on('signal', function (data) {
+    io.emit( 'signal', data)
+  });
+
+  socket.on('sendId', function (data) {
+    socket.broadcast.emit( 'sendId', data)
   });
 });
 

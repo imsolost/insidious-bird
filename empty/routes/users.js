@@ -14,8 +14,9 @@ router.post('/signup', function ( req, res, next ) {
     .then( (response) => {
               console.log('got to line 15ish', response);
       passport.authenticate('local', (err, user, info) => {
-        console.log('got to line 17ish', user);
-        if (user) { res.redirect( '/game' ) }
+        console.log('got to line 17ish', response);
+        req.session.user = response[0]
+        if (response[0]) { res.redirect( '/game' ) }
       })(req, res, next)
     })
     .catch((err) => { console.log('there is an error adding a user', err); })
@@ -25,6 +26,11 @@ router.post('/signup', function ( req, res, next ) {
   //   .then( user => res.redirect( '/game' ) )
 });
 
+/* GET home page. */
+router.get('/login', function(req, res, next) {
+  res.render('index', { title: 'Rainbow Super Attack Happy Fun Time' });
+});
+
 router.post('/login', function ( req, res, next ) {
   let { user_name, password } = req.body
 
@@ -32,6 +38,7 @@ router.post('/login', function ( req, res, next ) {
     .then( user => {
       if ( user[0] ) {
         if ( user[0].password === password ) {
+          req.session.user = user[0]
           res.redirect('/game')
         }
         else {
