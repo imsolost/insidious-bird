@@ -13,7 +13,7 @@ Learn the ins and outs of Networking and sharing simultaneous data between multi
 - [x] User can play a basic Flappy Bird clone using the Spacebar
 - [ ] Map is generated randomly with a reusable seed, allowing multiple players to see the same random map.
 - [ ] User can log in, and we will use a postresql database to save high scores, achievements, flap count
-- [ ] Users will be able to connect to each other from different computers to play a head-to-head game.
+- [x] Users will be able to connect to each other from different computers to play a head-to-head game.
 - [ ] Game saves win loss record after versus games
 - [ ] Database saves locations where players have died, and you can see the deaths of people you played a vs. match against.
 - [ ] Test backend and testable front end functions with chai
