@@ -1,5 +1,17 @@
 # insidious-bird
 
+## Instructions
+This is a networked-multiplayer game based on Flappy Bird
+
+To play this game, first start your server with npm start.
+To get your computer's network name, look in SystemPreferences/Sharing.  You should see a name along the lines of [ComputerName].local.  
+Open up a browser and go to `localhost:3000` to start the game.  Space lets you jump, and W... makes things easier.
+To play with other people, have someone else use your computer's network name like so `[ComputerName].local:3000`
+
+You should see a rainbow sheep appear on your version of the game when someone else goes to that address, or refreshes their page. When they jump in their game, you will see the rainbow sheep jump in your game. 
+
+(Unfortunately, the games do not sync up, so each computer sees separate games.  It works best if everyone watches the same screen.)
+
 ## Description
 
 Use a Flappy Bird Clone to make a networked game that includes simultaneous multiplayer and saving a user's game data to a postresql database.
