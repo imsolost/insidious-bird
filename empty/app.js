@@ -1,3 +1,5 @@
+const passport = require('passport');
+
 const express = require('express');
 const path = require('path');
 
@@ -6,11 +8,15 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const session = require('express-session')
+const socketIo = require('socket.io');
+const http = require('http');
 
 const index = require('./routes/index');
 const users = require('./routes/users');
 
 const app = express();
+const httpServer = http.Server(app);
+const io = socketIo(httpServer);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -23,10 +29,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/game', express.static(path.join(__dirname, 'phaser')))
 
-app.use('/', index);
+app.use(session( {secret: 'weCodeGood'}))
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use('/users', users);
+app.use('/', index);
 
 
 // catch 404 and forward to error handler
@@ -47,4 +56,18 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+io.on('connection', function (socket) {
+  socket.emit('news', { hello: 'world' });
+
+  socket.on('signal', function (data) {
+    console.log('Are we still getting signals', data.sendingId);
+    socket.broadcast.emit( 'signal', data)
+  });
+
+  socket.on('sendId', function (data) {
+    io.emit( 'sendId', data)
+  });
+
+});
+
+module.exports = httpServer;

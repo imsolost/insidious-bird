@@ -9,6 +9,7 @@
     "db:schema": "psql flappybase -f ./database/schema.sql"
   },
   "dependencies": {
+    "bcryptjs": "^2.3.0",
     "body-parser": "~1.15.2",
     "connect-flash": "^0.1.1",
     "cookie-parser": "~1.4.3",
@@ -21,7 +22,9 @@
     "passport-local": "^1.0.0",
     "pg": "^6.1.2",
     "pug": "~2.0.0-beta6",
-    "serve-favicon": "~2.3.0"
+    "serve-favicon": "~2.3.0",
+    "socket.io": "^1.7.2",
+    "socket.io-client": "^1.7.2"
   },
   "devDependencies": {
     "nodemon": "^1.11.0"
