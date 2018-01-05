@@ -1,19 +1,22 @@
 0 info it worked if it ends with ok
-1 verbose cli [ '/usr/local/bin/node', '/usr/local/bin/npm', 'run', 'db:init' ]
-2 info using npm@4.0.5
-3 info using node@v7.4.0
-4 verbose stack Error: ENOENT: no such file or directory, open '/Users/mantinone/Desktop/LG/package.json'
-5 verbose cwd /Users/mantinone/Desktop/LG/insidious-bird
-6 error Darwin 16.3.0
-7 error argv "/usr/local/bin/node" "/usr/local/bin/npm" "run" "db:init"
-8 error node v7.4.0
-9 error npm  v4.0.5
-10 error path /Users/mantinone/Desktop/LG/package.json
-11 error code ENOENT
-12 error errno -2
-13 error syscall open
-14 error enoent ENOENT: no such file or directory, open '/Users/mantinone/Desktop/LG/package.json'
-15 error enoent ENOENT: no such file or directory, open '/Users/mantinone/Desktop/LG/package.json'
-15 error enoent This is most likely not a problem with npm itself
-15 error enoent and is related to npm not being able to find a file.
-16 verbose exit [ -2, true ]
+1 verbose cli [ '/usr/local/Cellar/node/7.3.0/bin/node',
+1 verbose cli   '/usr/local/bin/npm',
+1 verbose cli   'start' ]
+2 info using npm@3.10.10
+3 info using node@v7.3.0
+4 verbose config Skipping project config: /Users/ryankent/.npmrc. (matches userconfig)
+5 verbose stack Error: ENOENT: no such file or directory, open '/Users/ryankent/package.json'
+6 verbose cwd /Users/ryankent/Desktop/LG/insidious-bird
+7 error Darwin 15.6.0
+8 error argv "/usr/local/Cellar/node/7.3.0/bin/node" "/usr/local/bin/npm" "start"
+9 error node v7.3.0
+10 error npm  v3.10.10
+11 error path /Users/ryankent/package.json
+12 error code ENOENT
+13 error errno -2
+14 error syscall open
+15 error enoent ENOENT: no such file or directory, open '/Users/ryankent/package.json'
+16 error enoent ENOENT: no such file or directory, open '/Users/ryankent/package.json'
+16 error enoent This is most likely not a problem with npm itself
+16 error enoent and is related to npm not being able to find a file.
+17 verbose exit [ -2, true ]
